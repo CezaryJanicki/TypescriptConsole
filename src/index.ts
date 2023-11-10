@@ -76,7 +76,8 @@ const startApp = () => {
     List = "list",
     Add = "add",
     Remove = "remove",
-    Quit = "quit"
+    Quit = "quit",
+    Edit = "edit",
   }
 
   type InquirerAnswers = {
@@ -120,6 +121,33 @@ const startApp = () => {
       case Action.Quit:
         Message.showColorized(MessageVariant.Info, "Bye bye!");
         return;
+      case Action.Edit:
+        const userEdit = await inquirer.prompt([{
+          name: 'name',
+          type: 'input',
+          message: 'Enter name',
+        }, {
+          name: 'age',
+          type: 'number',
+          message: 'Enter age',
+        }]);
+        const index = users.data.findIndex((u) => u.name === userEdit.name);
+        if (index > -1) {
+          const newUser = await inquirer.prompt([{
+            name: 'name',
+            type: 'input',
+            message: 'Enter new name',
+          }, {
+            name: 'age',
+            type: 'number',
+            message: 'Enter new age',
+          }]);
+          users.data[index] = newUser;
+          Message.showColorized(MessageVariant.Success, "User edited!");
+        } else {
+          Message.showColorized(MessageVariant.Error, "User not found...");
+        }
+        break;
       default:
         Message.showColorized(MessageVariant.Error, "Wrong action!");
         break;
@@ -137,6 +165,7 @@ console.log("\n");
 console.log("list – show all users");
 console.log("add – add new user to the list");
 console.log("remove – remove user from the list");
+console.log("edit – edit user from the list");
 console.log("quit – quit the app");
 console.log("\n");
 
